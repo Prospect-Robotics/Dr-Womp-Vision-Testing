@@ -6,6 +6,7 @@ import static com.team2813.Constants.BACK_LEFT_STEER_ID;
 import static com.team2813.Constants.BACK_RIGHT_DRIVE_ID;
 import static com.team2813.Constants.BACK_RIGHT_ENCODER_ID;
 import static com.team2813.Constants.BACK_RIGHT_STEER_ID;
+import static com.team2813.Constants.DriverConstants.DRIVER_CONTROLLER;
 import static com.team2813.Constants.FRONT_LEFT_DRIVE_ID;
 import static com.team2813.Constants.FRONT_LEFT_ENCODER_ID;
 import static com.team2813.Constants.FRONT_LEFT_STEER_ID;
@@ -13,21 +14,10 @@ import static com.team2813.Constants.FRONT_RIGHT_DRIVE_ID;
 import static com.team2813.Constants.FRONT_RIGHT_ENCODER_ID;
 import static com.team2813.Constants.FRONT_RIGHT_STEER_ID;
 import static com.team2813.Constants.PIGEON_ID;
-import static com.team2813.Constants.DriverConstants.DRIVER_CONTROLLER;
 import static com.team2813.lib2813.util.ControlUtils.deadband;
 import static edu.wpi.first.units.Units.Centimeters;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
-
-import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.stream.IntStream;
-
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -52,7 +42,6 @@ import com.team2813.commands.RobotLocalization;
 import com.team2813.lib2813.preferences.PreferencesInjector;
 import com.team2813.sysid.SwerveSysidRequest;
 import com.team2813.vision.MultiPhotonPoseEstimator;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -79,6 +68,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.List;
+import java.util.function.DoubleSupplier;
+import java.util.stream.IntStream;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** This is the Drive. His name is Gary. Please be kind to him and say hi. Have a nice day! */
 
@@ -547,6 +544,10 @@ public class Drive extends SubsystemBase implements AutoCloseable {
       photonPoseEstimator.addHeadingData(Timer.getTimestamp(), getRotation3d());
     }
     photonPoseEstimator.update(this::handlePhotonPose);
+    // Thoughts about moving away from functional programing paradigm here to just simpler,
+    // procedural programming, e.g.,
+    // List<Estimates> estimates = phonPoseEstimater.getEstimates();
+    // handleVisionPose(estimates);
     Pose2d drivePose = getPose();
     currentPosePublisher.set(drivePose);
     photonPoseEstimator.setDrivePose(drivePose);
