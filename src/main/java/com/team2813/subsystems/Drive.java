@@ -116,15 +116,21 @@ public class Drive extends SubsystemBase implements AutoCloseable {
   static final double FRONT_DIST = 0.4064;
   static final double LEFT_DIST = 0.3302;
 
+  // positive x - robot forward
+  // positive y - robot left
+  // positive z - robot up
+  // positive roll - tilt to the right
+  // positive pitch - look down
+  // positive yaw - turn left
   private static final Transform3d leftColorTransform =
       new Transform3d(
           new Translation3d(Centimeters.of(31), Centimeters.of(21), Centimeters.of(20)),
-          new Rotation3d(Degrees.of(0), Degrees.of(-30), Degrees.of(-30)));
+          new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(-30)));
 
   private static final Transform3d rightColorTransform =
       new Transform3d(
           new Translation3d(Centimeters.of(29), Centimeters.of(-23), Centimeters.of(13)),
-          new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(30)));
+          new Rotation3d(Degrees.of(0), Degrees.of(-20), Degrees.of(20)));
 
   /**
    * Configurable values for the {@code Drive} subsystem
@@ -538,6 +544,10 @@ public class Drive extends SubsystemBase implements AutoCloseable {
       photonPoseEstimator.addHeadingData(Timer.getTimestamp(), getRotation3d());
     }
     photonPoseEstimator.update(this::handlePhotonPose);
+    // Thoughts about moving away from functional programing paradigm here to just simpler,
+    // procedural programming, e.g.,
+    // List<Estimates> estimates = phonPoseEstimater.getEstimates();
+    // handleVisionPose(estimates);
     Pose2d drivePose = getPose();
     currentPosePublisher.set(drivePose);
     // TODO(vdikov): The name/purpose of `setDrivePose` method of MultiPhotonPoseEstimator is not
