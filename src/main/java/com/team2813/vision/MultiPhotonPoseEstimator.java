@@ -3,6 +3,7 @@ package com.team2813.vision;
 import static com.team2813.vision.CameraConstants.LIMELIGHT_CAMERA_NAME;
 import static com.team2813.vision.VisionNetworkTables.CAMERA_POSE_TOPIC;
 import static com.team2813.vision.VisionNetworkTables.getTableForCamera;
+import static com.team2813.vision.VisionNetworkTables.getVisionEstimatorTable;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -160,6 +161,15 @@ public class MultiPhotonPoseEstimator implements AutoCloseable {
 
   /** Creates an instance using values from a {@code Builder}. */
   private MultiPhotonPoseEstimator(Builder builder) {
+    // Publish the pose strategy that was passed into the builder.
+    // The pose strategy is derived from data in Preferences, but the build() method is called when
+    // com.team2813.Robot is constructed (i.e. soon over the JVM is started), so if the preference
+    // value is updated in Elastic, the pose strategy wouldn't be recalculated right away.
+    getVisionEstimatorTable(builder.ntInstance)
+        .getStringTopic("poseStrategy")
+        .publish()
+        .set(builder.poseStrategy.name());
+
     for (var entry : builder.cameraConfigs.entrySet()) {
       String cameraName = entry.getKey();
       CameraConfig cameraConfig = entry.getValue();
