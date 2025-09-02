@@ -26,6 +26,17 @@ public final class VisionNetworkTables {
   static final String APRIL_TAG_POSE_TOPIC = "aprilTagPose";
 
   private static final String TABLE_NAME = "Vision";
+  private static final String CAMERA_SUBTABLE_NAME = "camera";
+  private static final String ESTIMATOR_SUBTABLE_NAME = "estimator";
+
+  /**
+   * Gets the network table to use to store data related to pose estimation.
+   *
+   * @param ntInstance network table instance to publish to.
+   */
+  public static NetworkTable getVisionEstimatorTable(NetworkTableInstance ntInstance) {
+    return ntInstance.getTable(TABLE_NAME).getSubTable(ESTIMATOR_SUBTABLE_NAME);
+  }
 
   /**
    * Gets the network table for the camera with the given name
@@ -34,7 +45,10 @@ public final class VisionNetworkTables {
    * @param cameraName name of the camera.
    */
   public static NetworkTable getTableForCamera(NetworkTableInstance ntInstance, String cameraName) {
-    return ntInstance.getTable(TABLE_NAME).getSubTable(cameraName);
+    return ntInstance
+        .getTable(TABLE_NAME)
+        .getSubTable(CAMERA_SUBTABLE_NAME)
+        .getSubTable(cameraName);
   }
 
   /** Gets the network table for the provided photon vision camera. */
