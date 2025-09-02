@@ -10,11 +10,11 @@
           "width": 300,
           "expanded": [
             "/Drive",
-            "/photonvision/capt-barnacles",
-            "/photonvision/professor-inkling",
-            "/Vision/capt-barnacles",
-            "/Vision/professor-inkling",
-            "/Vision/limelight"
+            "/photonVision/left_color",
+            "/photonVision/right_color",
+            "/Vision/camera",
+            "/Vision/camera/left_color",
+            "/Vision/camera/right_color"
           ]
         },
         "tabs": {
@@ -74,8 +74,15 @@
                     "options": {}
                   },
                   {
+                    "type": "rotationOverride",
+                    "logKey": "NT:/Drive/pigeon angle",
+                    "logType": "Rotation3d",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
                     "type": "ghost",
-                    "logKey": "NT:/Vision/professor-inkling/poseEstimate",
+                    "logKey": "NT:/Vision/camera/right_color/poseEstimate",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
@@ -84,7 +91,7 @@
                   },
                   {
                     "type": "vision",
-                    "logKey": "NT:/Vision/professor-inkling/aprilTagPose",
+                    "logKey": "NT:/Vision/camera/right_color/aprilTagPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
@@ -94,7 +101,7 @@
                   },
                   {
                     "type": "ghost",
-                    "logKey": "NT:/Vision/capt-barnacles/poseEstimate",
+                    "logKey": "NT:/Vision/camera/left_color/poseEstimate",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
@@ -103,30 +110,11 @@
                   },
                   {
                     "type": "vision",
-                    "logKey": "NT:/Vision/capt-barnacles/aprilTagPose",
+                    "logKey": "NT:/Vision/camera/left_color/aprilTagPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
                       "color": "#00ffff",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/Vision/limelight/poseEstimate",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "vision",
-                    "logKey": "NT:/Vision/limelight/visibleAprilTagPoses",
-                    "logType": "Pose3d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
                       "size": "normal"
                     }
                   }
