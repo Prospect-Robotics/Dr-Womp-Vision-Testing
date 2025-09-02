@@ -23,7 +23,7 @@ public class PhotonVisionPosePublisherTest {
       new Pose3d(
           28, 13, 25, new Rotation3d(Math.toRadians(28), Math.toRadians(13), Math.toRadians(25)));
   private static final String CAMERA_NAME = "tweak";
-  private static final String EXPECTED_TABLE_NAME = "Vision/tweak";
+  private static final String EXPECTED_TABLE_NAME = "Vision/camera/tweak";
 
   @Rule public final NetworkTableResource networkTable = new NetworkTableResource();
 
