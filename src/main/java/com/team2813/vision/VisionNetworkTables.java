@@ -41,6 +41,8 @@ public final class VisionNetworkTables {
   /**
    * Gets the network table for the camera with the given name
    *
+   * <p>The key of the network table will be `Vision/[cameraName]`.
+   *
    * @param ntInstance network table instance to publish to.
    * @param cameraName name of the camera.
    */
@@ -51,7 +53,11 @@ public final class VisionNetworkTables {
         .getSubTable(cameraName);
   }
 
-  /** Gets the network table for the provided photon vision camera. */
+  /**
+   * Gets the network table for the provided photon vision camera.
+   *
+   * <p>The key of the network table will be `Vision/[cameraName]`.
+   */
   public static NetworkTable getTableForCamera(PhotonCamera camera) {
     return getTableForCamera(camera.getCameraTable().getInstance(), camera.getName());
   }

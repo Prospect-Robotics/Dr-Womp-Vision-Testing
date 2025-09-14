@@ -39,7 +39,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.google.auto.value.AutoBuilder;
 import com.team2813.commands.DefaultDriveCommand;
 import com.team2813.commands.RobotLocalization;
-import com.team2813.lib2813.preferences.PreferencesInjector;
+import com.team2813.lib2813.preferences.PersistedConfiguration;
 import com.team2813.sysid.SwerveSysidRequest;
 import com.team2813.vision.MultiPhotonPoseEstimator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -78,15 +78,6 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 /** This is the Drive. His name is Gary. Please be kind to him and say hi. Have a nice day! */
-
-/*
-TODO: The compiled list of lines that MIGHT need changing.
-  Max velocity. - later
-  Max rotations per second. -later
-  Change steer PID values.
-  Change drive PID values.
- */
-
 public class Drive extends SubsystemBase implements AutoCloseable {
   private static final double DEFAULT_MAX_VELOCITY_METERS_PER_SECOND =
       6; // TODO: Get max velocity now since we have the camera cage.
@@ -97,7 +88,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
   private final SwerveDrivetrain<TalonFX, TalonFX, CANcoder> drivetrain;
   private final SimulatedSwerveDrivetrain simDrivetrain;
   private final VisionSystemSim simVisionSystem;
-  private final DriveConfiguration config;
+  private final Configuration config;
   private final MultiPhotonPoseEstimator photonPoseEstimator;
 
   private final StructArrayPublisher<SwerveModuleState> expectedStatePublisher;
@@ -139,7 +130,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
    * <p>Thee values here can be updated in the SmartDashboard/Shuffleboard UI, and will have keys
    * starting with {@code "subsystems.Drive.DriveConfiguration."}.
    */
-  public record DriveConfiguration(
+  public record Configuration(
       boolean addLimelightMeasurement,
       boolean usePhotonVisionLocation,
       boolean usePnpDistanceTrigSolveStrategy,
@@ -147,7 +138,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
       DoubleSupplier maxRotationsPerSecond,
       DoubleSupplier maxVelocityInMetersPerSecond) {
 
-    public DriveConfiguration {
+    public Configuration {
       if (maxLimelightDifferenceMeters <= 0) {
         throw new IllegalArgumentException("maxLimelightDifferenceMeters must be positive");
       }
@@ -169,7 +160,7 @@ public class Drive extends SubsystemBase implements AutoCloseable {
 
     /** Creates a builder for {@code DriveConfiguration} with default values. */
     public static Builder builder() {
-      return new AutoBuilder_Drive_DriveConfiguration_Builder()
+      return new AutoBuilder_Drive_Configuration_Builder()
           .addLimelightMeasurement(true)
           .usePhotonVisionLocation(false)
           .maxRotationsPerSecond(DEFAULT_MAX_ROTATIONS_PER_SECOND)
@@ -179,9 +170,9 @@ public class Drive extends SubsystemBase implements AutoCloseable {
     }
 
     /** Creates an instance from preference values stored in the robot's flash memory. */
-    public static DriveConfiguration fromPreferences() {
-      DriveConfiguration defaultConfig = builder().build();
-      return PreferencesInjector.DEFAULT_INSTANCE.injectPreferences(defaultConfig);
+    public static Configuration fromPreferences() {
+      Configuration defaultConfig = builder().build();
+      return PersistedConfiguration.fromPreferences("Drive", defaultConfig);
     }
 
     @AutoBuilder
@@ -206,18 +197,18 @@ public class Drive extends SubsystemBase implements AutoCloseable {
 
       Builder usePnpDistanceTrigSolveStrategy(boolean enabled);
 
-      DriveConfiguration build();
+      Configuration build();
     }
   }
 
   public Drive(NetworkTableInstance networkTableInstance, RobotLocalization localization) {
-    this(networkTableInstance, localization, DriveConfiguration.fromPreferences());
+    this(networkTableInstance, localization, Configuration.fromPreferences());
   }
 
   public Drive(
       NetworkTableInstance networkTableInstance,
       RobotLocalization localization,
-      DriveConfiguration config) {
+      Configuration config) {
     this.localization = localization;
 
     var aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
@@ -533,11 +524,6 @@ public class Drive extends SubsystemBase implements AutoCloseable {
 
   @Override
   public void periodic() {
-    // If the limelight has a position, send it to SwerveDrivetrain.addVisionMeasurement().
-    //
-    // Note: we call limelightLocation() even if config.addLimelightMeasurement is false so
-    // the position is published to network tables, which allows us to view the limelight's
-    // pose estimate in AdvantageScope.
 
     // Publish data to NetworkTables
     expectedStatePublisher.set(drivetrain.getState().ModuleTargets);
